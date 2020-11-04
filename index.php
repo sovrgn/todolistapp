@@ -9,6 +9,8 @@
      WHERE user_id = '".$_SESSION['user_id']."'
      ORDER BY task_id DESC
     ";
+  } else {
+    header('Location: login.php');
   }
 
   $statement = $connect->prepare($query);
@@ -27,9 +29,6 @@
     <link rel="stylesheet" href="css/styles.css">
   </head>
   <body>
-
-
-  <?php if (!isset($SESSION['username'])) { ?>
 
 
   <div class="wrapper">
@@ -55,16 +54,15 @@
         <?php
           foreach($result as $row)
           {
-            $style = '';
+            $classCompleted = '';
             if($row["task_status"] == 1) {
-              $style = 'text-decoration: line-through';
-            } elseif ($row["task_status"] == 0) {
-              $style = 'text-decoration: none';
+              $classCompleted = ' task-completed';
             }
+
+
             echo
             '<a href=""
-              style="'.$style.'"
-              class="list-group-item"
+              class="list-group-item'.$classCompleted.'"
               id="list-group-item-'.$row["task_id"].'"
               data-id="'.$row["task_id"].'">'.$row["task_details"].'
               <span class="badge" data-id="'.$row["task_id"].'">X</span>
@@ -77,7 +75,7 @@
     </div>
   </div>
 
-  <?php } else { header('Location: login.php');} ?>
+
   </body>
 </html>
 
@@ -108,16 +106,23 @@ $(document).ready(function(){
     }
   });
 
-  $(document).on('click', '.list-group-item', function(){
+  $(document).on('click', '.list-group-item', function(e){
+    e.preventDefault();
+
     var task_id = $(this).data('id');
+    let taskNewStatus = $(this).hasClass('task-completed') ? 0 : 1;
 
       $.ajax({
         url:"update_task.php",
         method:"POST",
-        data:{task_id:task_id},
+        data:{task_id:task_id, task_status: taskNewStatus},
         success:function(data)
         {
-         $('#list-group-item-'+task_id).css('text-decoration', 'line-through');
+          if (taskNewStatus == 1) {
+            $('#list-group-item-'+task_id).addClass('task-completed');
+          } else {
+            $('#list-group-item-'+task_id).removeClass('task-completed');
+          }
         }
       })
   });

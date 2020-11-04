@@ -264,3 +264,7 @@ html {
   color: white;
   padding: 0 .5rem;
 }
+
+.task-completed {
+  text-decoration: line-through;
+}

@@ -7,7 +7,7 @@ if($_POST["task_id"])
 {
 
   $data = array(
-  ':task_status'  => 1,
+  ':task_status'  => $_POST['task_status'],
   ':task_id'  => $_POST["task_id"]
   );
 
